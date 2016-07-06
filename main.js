@@ -14,15 +14,15 @@ var server = http.createServer(function(req, res) {
             res.statusCode=404;
             res.end();
         });
-    }
-    if("POST" === req.method) {
+        
+    } else if("POST" === req.method) {
         var writable = fs.writePath(path, auth);
         req.pipe(writable);
         req.on("end", function () {
             res.end("ok");
         });
-    }
-    if("DELETE" === req.method) {
+
+    } else if("DELETE" === req.method) {
         try {
             fs.deletePath(path, auth);
         } catch(e) {
