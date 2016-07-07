@@ -8,6 +8,7 @@ var server = http.createServer(function(req, res) {
     var auth = "";
 
     if("GET" === req.method) {
+        res.setHeader("Content-Type", "text/html;charset=utf-8");
         var readable = fs.readPath(req.url, auth);
         readable.pipe(res);
         readable.on("error", function () {
