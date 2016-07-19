@@ -28,7 +28,8 @@ var server = http.createServer(function(req, res) {
             fs.deletePath(path, auth);
         } catch(e) {
             console.log("Error: ", path, e.code);
-            if(e === "access denied") res.statusCode=403;
+            if(e === "access denied") res.statusCode=403; 
+            else if (e.code === "ENOENT") res.statusCode=404;
             else res.statusCode=503;
         }
         res.end("ok");
