@@ -3,7 +3,8 @@ const stream = require("stream");
 const auth = require("./AccessControlService");
 const combStream = require("combined-stream");
 const escTransform = require("./EscapeTransformStream");
-
+const rimraf = require("rimraf");
+const mkdirp = require("mkdirp");
 
 this.READ_OPERATION = "r";
 this.WRITE_OPERATION = "w";
@@ -21,10 +22,19 @@ this.readPath = function(path, jwt) {
 this.writePath = function(path, jwt) {
     if(!auth.isAuthorisedOperation(path, this.WRITE_OPERATION, jwt)) throw "access denied";
 
-    if(fs.existsSync(filePath(path))) fs.unlinkSync(filePath(path));
+    var dirPath = filePath(path.substring(0, path.lastIndexOf('/')));
+    try {
+        mkdirp.sync(dirPath, function () {
+            console.log("Created path", path);
+        });
+        if(fs.existsSync(filePath(path))) fs.unlinkSync(filePath(path));
+        var writable = fs.createWriteStream(filePath(path));
+        return writable;
 
-    var writable = fs.createWriteStream(filePath(path));
-    return writable;
+    } catch(e) {
+        throw "Unable to create path "+path;
+    }
+
 };
 
 this.deletePath = function(path, jwt) {
@@ -74,21 +84,7 @@ function fileAsJSON(path) {
 };
 
 function rmdir(path) {
-    if( fs.existsSync(path) ) {
-        console.log("file exists, deleting ", path);
-        fs.readdirSync(path).forEach(function(file,index) {
-            var curPath = path + "/" + file;
-            if(fs.lstatSync(curPath).isDirectory()) { // recurse
-                rmdir(curPath);
-            } else { // delete file
-                fs.unlinkSync(curPath);
-            }
-        });
-        console.log("rmdirSync ", path);
-        fs.rmdirSync(path);
-    }
+    rimraf(path, function(){
+        console.log(new Date(), "deleted", path);
+    });
 };
-
-//dirAsJSON("bigTree").pipe(process.stdout)
-
-//console.log(fs.rmdirSync(filePath("/bigTree/aaa/bbb/aaa/drei/ein")));

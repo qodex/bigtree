@@ -17,12 +17,16 @@ var server = http.createServer(function(req, res) {
         });
         
     } else if("POST" === req.method) {
-        var writable = fs.writePath(path, auth);
-        req.pipe(writable);
-        req.on("end", function () {
-            res.end("ok");
-        });
-
+        try {
+            var writable = fs.writePath(path, auth);
+            req.pipe(writable);
+            req.on("end", function () {
+                res.end("ok");
+            });
+        } catch (e) {
+            res.statusCode=500;
+            res.end(e);
+        }
     } else if("DELETE" === req.method) {
         try {
             fs.deletePath(path, auth);
