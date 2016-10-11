@@ -1,7 +1,8 @@
 var http = require("http");
+var WebSocketServer = require("ws").Server;
 var fs = require("./BigTreeFS");
 
-var port = 3001;
+var port = 3002;
 
 var server = http.createServer(function(req, res) {
     var path = req.url;
@@ -39,6 +40,14 @@ var server = http.createServer(function(req, res) {
         res.end("ok");
     }
 });
+
+var wss = new WebSocketServer({server: server});
+
+wss.on("connection", function(ws){
+    console.log(ws.upgradeReq.url);
+    ws.send("babaganush");
+});
+
 server.listen(port, function() {
     console.log("BigTree server started in port "+port);
 });
