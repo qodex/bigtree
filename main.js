@@ -1,8 +1,10 @@
 var http = require("http");
 var WebSocketServer = require("ws").Server;
 var fs = require("./BigTreeFS");
+var PubSubService = require("./PubSubService");
+var pubSub = new PubSubService();
 
-var port = 3002;
+var port = 3001;
 
 var server = http.createServer(function(req, res) {
     var path = req.url;
@@ -23,6 +25,7 @@ var server = http.createServer(function(req, res) {
             req.pipe(writable);
             req.on("end", function () {
                 res.end("ok");
+                pubSub.publish(path, path);
             });
         } catch (e) {
             res.statusCode=500;
@@ -31,6 +34,7 @@ var server = http.createServer(function(req, res) {
     } else if("DELETE" === req.method) {
         try {
             fs.deletePath(path, auth);
+            pubSub.publish(path, path);
         } catch(e) {
             console.log("Error: ", path, e.code);
             if(e === "access denied") res.statusCode=403; 
@@ -44,8 +48,9 @@ var server = http.createServer(function(req, res) {
 var wss = new WebSocketServer({server: server});
 
 wss.on("connection", function(ws){
-    console.log(ws.upgradeReq.url);
-    ws.send("babaganush");
+    pubSub.subscribe(ws.upgradeReq.url, function (message) {
+        ws.send(message);
+    });
 });
 
 server.listen(port, function() {

@@ -30,7 +30,6 @@ this.writePath = function(path, jwt) {
         if(fs.existsSync(filePath(path))) fs.unlinkSync(filePath(path));
         var writable = fs.createWriteStream(filePath(path));
         return writable;
-
     } catch(e) {
         throw "Unable to create path "+path;
     }
