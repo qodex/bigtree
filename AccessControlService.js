@@ -1,5 +1,15 @@
-var fs = require("./BigTreeFS");
-this.isAuthorisedOperation = function(path, operation, jwt) {
+module.exports = AccessControlService;
 
-    return jwt? operation === fs.READ_OPERATION : true;
+/**
+ * Authenticates (true/false) access operation (r/w/d) to a path based on JWT.
+ * @returns {{isAuthenticatedOperation: isAuthenticatedOperation}}
+ * @constructor
+ */
+function AccessControlService(fs) {
+
+    function isAuthorisedOperation(path, operation, jwt) {
+        return true;
+    }
+    
+    return {isAuthorisedOperation:isAuthorisedOperation}
 }
