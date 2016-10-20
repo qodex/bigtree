@@ -13,7 +13,7 @@ var server = http.createServer(function(req, res) {
 
     if("GET" === req.method) {
         try {
-            if (!auth.isAuthorisedOperation(path, "r", authToken)) throw "access denied";
+            if (!auth.isAuthorisedOperation(path, auth.READ, authToken)) throw "access denied";
             res.setHeader("Content-Type", "text/html;charset=utf-8");
             var readable = btfs.read(req.url);
             readable.pipe(res);
@@ -29,7 +29,7 @@ var server = http.createServer(function(req, res) {
         
     } else if("POST" === req.method) {
         try {
-            if(!auth.isAuthorisedOperation(path, "w", authToken)) throw "access denied";
+            if(!auth.isAuthorisedOperation(path, auth.WRITE, authToken)) throw "access denied";
             var writable = btfs.write(path);
             req.pipe(writable);
             req.on("end", function () {
@@ -45,7 +45,7 @@ var server = http.createServer(function(req, res) {
         
     } else if("DELETE" === req.method) {
         try {
-            if(!auth.isAuthorisedOperation(path, "d", authToken)) throw "access denied";
+            if(!auth.isAuthorisedOperation(path, auth.DELETE, authToken)) throw "access denied";
             btfs.delete(path);
             pubSub.publish(path, path);
             res.end("ok");
@@ -61,10 +61,32 @@ var server = http.createServer(function(req, res) {
 
 var wss = new WebSocketServer({server: server});
 
-wss.on("connection", function(ws){
-    pubSub.subscribe(ws.upgradeReq.url, function (message) {
-        ws.send(message);
-    });
+/**
+ * Clients can connect over websockets to listen to path changes
+ */
+wss.on("connection", function(ws) {
+
+    /**
+     * If the path is not secured, subscribe immediately.
+     * If the path is secured, expect authentication token from client
+     * as the first and only message. Subscribe if valid, disconnect if not.
+     */
+    if(auth.isAuthorisedOperation(ws.upgradeReq.url, auth.READ, "")) {
+        pubSub.subscribe(ws.upgradeReq.url, function (message) {
+            ws.send(message);
+        });
+    } else {
+        ws.on("message", function(msg){
+            //First and only message from the client should contain authentication token.
+            if(auth.isAuthorisedOperation(ws.upgradeReq.url, auth.READ, msg)) {
+                pubSub.subscribe(ws.upgradeReq.url, function (message) {
+                    ws.send(message);
+                });
+            } else {
+                ws.close();
+            }
+        });
+    }
 });
 
 server.listen(port, function() {
