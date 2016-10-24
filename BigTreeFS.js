@@ -46,7 +46,7 @@ function filePath(path) {
 }
 
 /**
- * Returns a readable stream that contain a folder and its sub folders as a JSON object with files and their contents
+ * Returns a readable stream that contains the folder and its sub folders as a JSON object with files and their contents
  * as fields and values
  *
  * @param path - absolute path on the local drive

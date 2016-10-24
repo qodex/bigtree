@@ -1,3 +1,8 @@
+/**
+ * Main BigTree executable.
+ * BigTree is a web persistence and messaging platform for integration, big data and responsive web app development.
+ */
+
 var http = require("http");
 var WebSocketServer = require("ws").Server;
 var btfs = require("./BigTreeFS");
@@ -12,50 +17,41 @@ var server = http.createServer(function(req, res) {
     authToken = authToken ? authToken.substring("Bearer ".length) : authToken;
 
     if("GET" === req.method) {
-        try {
-            if (!auth.isAuthorisedOperation(path, auth.READ, authToken)) throw "access denied";
+        auth.authenticate(path, auth.READ, authToken).then(function() {
             res.setHeader("Content-Type", "text/html;charset=utf-8");
             var readable = btfs.read(req.url);
             readable.pipe(res);
             readable.on("error", function () {
                 res.statusCode = 404;
+                res.end();
             });
-        } catch (e) {
-            if(e === "access denied") res.statusCode=403;
-            else if (e.code === "ENOENT" || e === "ENOENT") res.statusCode=404;
-            else res.statusCode=503;
+        }).catch(function () {
+            res.statusCode=403;
             res.end();
-        }
+        });
         
     } else if("POST" === req.method) {
-        try {
-            if(!auth.isAuthorisedOperation(path, auth.WRITE, authToken)) throw "access denied";
+        auth.authenticate(path, auth.WRITE, authToken).then(function() {
             var writable = btfs.write(path);
             req.pipe(writable);
             req.on("end", function () {
                 res.end("ok");
                 pubSub.publish(path, path);
             });
-        } catch (e) {
-            if(e === "access denied") res.statusCode=403;
-            else if (e.code === "ENOENT") res.statusCode=404;
-            else res.statusCode=503;
+        }).catch(function () {
+            res.statusCode=403;
             res.end();
-        }
+        });
         
     } else if("DELETE" === req.method) {
-        try {
-            if(!auth.isAuthorisedOperation(path, auth.DELETE, authToken)) throw "access denied";
+        auth.authenticate(path, auth.WRITE, authToken).then(function() {
             btfs.delete(path);
             pubSub.publish(path, path);
             res.end("ok");
-        } catch(e) {
-            if(e === "access denied") res.statusCode=403;
-            else if (e.code === "ENOENT") res.statusCode=404;
-            else res.statusCode=503;
+        }).catch(function () {
+            res.statusCode=403;
             res.end();
-        }
-        
+        });
     }
 });
 
