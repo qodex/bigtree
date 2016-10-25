@@ -62,29 +62,27 @@ var wss = new WebSocketServer({server: server});
  */
 wss.on("connection", function(ws) {
 
-    /**
-     * If the path is not secured, subscribe immediately.
-     * If the path is secured, expect authentication token from client
-     * as the first and only message. Subscribe if valid, disconnect if not.
-     */
-    if(auth.isAuthorisedOperation(ws.upgradeReq.url, auth.READ, "")) {
+    auth.authenticate(ws.upgradeReq.url, auth.LISTEN, "").then(function() {
+        // If authenticated with empty token then path is not secured, subscribe to listen to events
         pubSub.subscribe(ws.upgradeReq.url, function (message) {
             ws.send(message);
         });
-    } else {
+
+    }).catch(function() {
+        //If path is secured, wait for token from client then authenticate and subscribe
         ws.on("message", function(msg){
-            //First and only message from the client should contain authentication token.
-            if(auth.isAuthorisedOperation(ws.upgradeReq.url, auth.READ, msg)) {
+            auth.authenticate(ws.upgradeReq.url, auth.LISTEN, msg).then(function () {
                 pubSub.subscribe(ws.upgradeReq.url, function (message) {
                     ws.send(message);
                 });
-            } else {
+            }).catch(function () {
                 ws.close();
-            }
+            });
         });
-    }
+        
+    });
 });
 
 server.listen(port, function() {
-    console.log("BigTree server started in port "+port);
+    console.log("BigTree server started on port "+port);
 });
