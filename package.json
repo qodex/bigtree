@@ -1,18 +1,28 @@
 {
-  "name": "bigTree",
-  "version": "1.0.0",
-  "description": "Qodex Big Tree",
-  "main": "main.js",
+  "name": "bigtree",
+  "version": "1.0.2",
+  "description": "Simple persistence and messaging for web.",
+  "main": "BigTreeServer.js",
   "dependencies": {
     "combined-stream": "^1.0.5",
     "mkdirp": "^0.5.1",
-    "rimraf": "^2.5.4"
+    "rimraf": "^2.5.4",
+    "ws": "^1.1.1",
+    "jsonwebtoken": "^7.1.9"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Maxim Suponya",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qodex/bigtree.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qodex/bigtree/issues"
+  },
+  "homepage": "https://github.com/qodex/bigtree#readme"
 }

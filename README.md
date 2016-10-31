@@ -25,12 +25,12 @@ DELETE http://localhost:3001/users/max: HTTP 200 "ok"
 GET http://localhost:3001/users/max/firstName: HTTP 404
 </pre>
 <p>
-If during the above calls there was a websocket connection to ws://localhost:3001/qodex/users it would receive the following messages:
+If during the above calls there was a websocket connection to ws://localhost:3001/users it would receive the following messages:
 </p>
 <pre>
-/qodex/users/max/firstName
-/qodex/users/max/lastName
-/qodex/users/max
+/users/max/firstName
+/users/max/lastName
+/users/max
 </pre>
 
 <b>Security and authentication:</b>
