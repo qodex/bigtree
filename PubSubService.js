@@ -30,8 +30,8 @@ module.exports = {
         topics[topic].push(listener);
         console.log("Subscribed to "+topic+", listeners count: "+topics[topic].length);
         return function () {
-            var index = topics.indexOf(listener);
-            if(index>-1) topics.splice(index, 1);
+            var index = topics[topic].indexOf(listener);
+            if(index>-1) topics[topic].splice(index, 1);
         }
     }
 

@@ -64,9 +64,11 @@ function BigTreeServer(port) {
      */
     wss.on("connection", function(ws) {
 
+        var unsubscribe = undefined;
+
         auth.authenticate(ws.upgradeReq.url, auth.LISTEN, "").then(function() {
             // If authenticated with empty token then path is not secured, subscribe to listen to events
-            pubSub.subscribe(ws.upgradeReq.url, function (message) {
+            unsubscribe = pubSub.subscribe(ws.upgradeReq.url, function (message) {
                 ws.send(message);
             });
 
@@ -74,7 +76,7 @@ function BigTreeServer(port) {
             //If path is secured, wait for token from client then authenticate and subscribe
             ws.on("message", function(msg){
                 auth.authenticate(ws.upgradeReq.url, auth.LISTEN, msg).then(function () {
-                    pubSub.subscribe(ws.upgradeReq.url, function (message) {
+                    unsubscribe = pubSub.subscribe(ws.upgradeReq.url, function (message) {
                         ws.send(message);
                     });
                 }).catch(function () {
@@ -83,6 +85,10 @@ function BigTreeServer(port) {
             });
 
         });
+
+        ws.on("close", function () {
+            unsubscribe();
+        });
     });
 
     server.listen(port, function() {
@@ -90,6 +96,6 @@ function BigTreeServer(port) {
     });
 
     return {
-        "version":"1.0"
+
     }
 }
