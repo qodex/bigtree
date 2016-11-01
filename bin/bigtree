@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var BigTreeServer = require("../BigTreeServer");
+
+var port = process.argv[2];
+port = port ? port : 3001;
+new BigTreeServer(port);

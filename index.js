@@ -5,4 +5,4 @@
 
 var BigTreeServer = require("./BigTreeServer");
 
-var bt = new BigTreeServer(3001);
+module.exports = BigTreeServer;

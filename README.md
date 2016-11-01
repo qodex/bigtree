@@ -8,13 +8,13 @@ HTTP POST/GET/DELETE to a path to Create/Update/Read/Delete, connecto a path ove
 Requires NodeJS v6.3+
 </p>
 <b>To install and run:</b>
-<ol>
-<li>npm install bigtree</li>
-<li>var BigTreeServer = require("bigtree");</li>
-<li>new BigTreeServer(3001);</li>
-</ol>
+<pre>
+$ npm install bigtree -g
+$ bigtree 3001
+BigTree server started on port 3001
+</pre>
 
-<b>Examples:</b>
+<b>Usage examples:</b>
 <pre>
 GET http://localhost:3001/users/max/firstName: HTTP 404
 POST "Maxim" http://localhost:3001/users/max/firstName: HTTP 200 "ok"

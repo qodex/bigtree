@@ -1,8 +1,12 @@
 {
   "name": "bigtree",
-  "version": "1.0.2",
+  "preferGlobal": true,
+  "version": "1.0.6",
   "description": "Simple persistence and messaging for web.",
-  "main": "BigTreeServer.js",
+  "main": "index.js",
+  "bin": {
+    "bigtree": "./bin/bigtree"
+  },
   "dependencies": {
     "combined-stream": "^1.0.5",
     "mkdirp": "^0.5.1",
