@@ -7,7 +7,7 @@ var http = require("http");
 var WebSocketServer = require("ws").Server;
 var btfs = require("./BigTreeFS");
 var pubSub = require("./PubSubService");
-var auth = require("./AccessControlService");
+var auth = require("./AuthService");
 
 module.exports = BigTreeServer;
 
