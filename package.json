@@ -1,7 +1,7 @@
 {
   "name": "bigtree",
   "preferGlobal": true,
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Simple persistence and messaging for web.",
   "main": "index.js",
   "bin": {

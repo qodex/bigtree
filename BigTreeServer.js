@@ -27,8 +27,9 @@ function BigTreeServer(port) {
                     res.statusCode = 404;
                     res.end();
                 });
-            }).catch(function () {
-                res.statusCode=403;
+            }).catch(function (e) {
+                console.log(e);
+                res.statusCode = "ENOENT"===e ? 404 : 403;
                 res.end();
             });
 

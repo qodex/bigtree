@@ -40,7 +40,12 @@ module.exports = {
         else fs.unlinkSync(fileName);
     }
 };
-    
+
+//make sure  /home/<user>/.bigTree folder exists
+if(!fs.existsSync(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']+"/.bigTree")) {
+    mkdirp.sync(process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']+"/.bigTree", function(){});
+}
+
 function filePath(path) {
     return process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']+"/.bigTree"+path;
 }
