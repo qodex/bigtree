@@ -53,7 +53,14 @@ Contents of the file will be used as the secret to verefy the token.</p>
 <li>A web app without any serverside code</li>
 </ul>
 
-<p>Sequence of calls for a secure chat between two clients can be the following:</p>
+
+<b>Apps that use bigtree for the server side persistence and messaging:</b>
+<ul>
+  <li>Chaff (<a href="https://chaff.xyz">https://chaff.xyz</a>), a location based web chat.</li>
+</ul>
+
+
+<b>Sequence of calls for a secure chat between two clients can be the following:</b>
 <ul>
 <li>Alice publicly shares a 'write only' token to /alice/public, it lets anyone write there but not read, delete or listen.</li>
 <li>Bob posts his fully secured path and access token to /alice/public/bobs_chat_info</li>
